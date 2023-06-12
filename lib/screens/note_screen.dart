@@ -14,7 +14,6 @@ class NoteScreen extends ConsumerWidget {
     required this.note,
   });
   final Note note;
-  final palleteSize = 72.0;
 
   String importedTitle = '';
   String importedNote = '';
@@ -80,11 +79,10 @@ class NoteScreen extends ConsumerWidget {
                       onPressed: () {
                         showModalBottomSheet(
                           context: context,
-                          builder: (ctx) =>
-                              ColorPick(palleteSize: palleteSize, note: note),
+                          builder: (ctx) => ColorPick(notes: [note]),
                         );
                       },
-                      icon: const Icon(Icons.colorize),
+                      icon: const Icon(Icons.color_lens),
                     ),
                     IconButton(
                       onPressed: () {
@@ -98,32 +96,33 @@ class NoteScreen extends ConsumerWidget {
                       icon: const Icon(Icons.label),
                     ),
                     IconButton(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (ctx) => AlertDialog(
-                              title: const Text('Delete'),
-                              content: const Text(
-                                  'Are you sure you want to delete this item?'),
-                              actions: [
-                                TextButton(
-                                    onPressed: () {
-                                      Navigator.of(ctx).pop();
-                                      onDeleteConfirm(false, ref, ctx);
-                                    },
-                                    child: const Text('cancel')),
-                                TextButton(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            title: const Text('Delete'),
+                            content: const Text(
+                                'Are you sure you want to delete this item?'),
+                            actions: [
+                              TextButton(
                                   onPressed: () {
                                     Navigator.of(ctx).pop();
-                                    onDeleteConfirm(true, ref, ctx);
+                                    onDeleteConfirm(false, ref, ctx);
                                   },
-                                  child: const Text('Yes'),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                        icon: const Icon(Icons.delete))
+                                  child: const Text('cancel')),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(ctx).pop();
+                                  onDeleteConfirm(true, ref, ctx);
+                                },
+                                child: const Text('Yes'),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.delete),
+                    )
                   ],
                 ),
               ),
@@ -165,7 +164,7 @@ class NoteScreen extends ConsumerWidget {
                   ),
                   keyboardType: TextInputType.multiline,
                   minLines: 1,
-                  maxLines: 10,
+                  maxLines: null,
                 ),
               ],
             ),

@@ -10,6 +10,9 @@ const darkScaffoldColor = Colors.black87;
 const lightSurface = Color.fromARGB(255, 1, 73, 66);
 const lightScaffoldColor = Colors.white60;
 
+//dims
+const palletesize = 72.0;
+
 //Utils
 const uuid = Uuid();
 final dateFormatter = DateFormat.yMd();

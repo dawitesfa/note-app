@@ -23,7 +23,7 @@ class NoteItem extends ConsumerWidget {
         border: Border.all(
           width: isSelcted ? 1.5 : 0.5,
           color: isSelcted
-              ? Colors.purple
+              ? Theme.of(context).colorScheme.secondaryContainer
               : Theme.of(context).colorScheme.onSurface.withOpacity(0.25),
         ),
         borderRadius: BorderRadius.circular(10),
@@ -74,7 +74,7 @@ class NoteItem extends ConsumerWidget {
                           Theme.of(context).textTheme.headlineLarge!.copyWith(
                                 fontSize: 14,
                               ),
-                      maxLines: 5,
+                      maxLines: 10,
                       overflow: TextOverflow.ellipsis,
                     )
                   : const SizedBox(),

@@ -10,6 +10,7 @@ class SelectedItemsNotifier extends StateNotifier<List<Note>> {
     } else {
       state = [...state, note];
     }
+    state.sort((a, b) => a.editedDate!.compareTo(b.editedDate!));
   }
 
   void deselect() {

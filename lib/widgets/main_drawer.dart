@@ -21,13 +21,15 @@ class MainDrawer extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             DrawerHeader(
-              padding: const EdgeInsets.only(left: 0),
               child: Center(
                 child: ListTile(
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(32)),
+                  ),
                   selected: selectedCategory == null,
                   selectedTileColor: Theme.of(context)
                       .colorScheme
-                      .onPrimaryContainer
+                      .surfaceTint
                       .withOpacity(0.6),
                   onTap: () {
                     ref.read(activeTabProvider.notifier).setTabIndex(0);
@@ -56,26 +58,35 @@ class MainDrawer extends ConsumerWidget {
               ),
             ),
             ...categories.map(
-              (category) => ListTile(
-                selected: selectedCategory != null &&
-                    selectedCategory.id == category.id,
-                selectedTileColor: Theme.of(context)
-                    .colorScheme
-                    .onPrimaryContainer
-                    .withOpacity(0.6),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  ref.read(activeTabProvider.notifier).setTabIndex(0);
-                  ref
-                      .read(activeCategoryProvider.notifier)
-                      .setActiveCategory(category);
-                },
-                leading: Icon(
-                  Icons.bookmark,
-                  color:
-                      Theme.of(context).colorScheme.onSurface.withOpacity(0.75),
+              (category) => Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: ListTile(
+                  selectedColor: Theme.of(context).colorScheme.onSurface,
+                  selected: selectedCategory != null &&
+                      selectedCategory.id == category.id,
+                  selectedTileColor: Theme.of(context)
+                      .colorScheme
+                      .surfaceTint
+                      .withOpacity(0.6),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(24)),
+                  ),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    ref.read(activeTabProvider.notifier).setTabIndex(0);
+                    ref
+                        .read(activeCategoryProvider.notifier)
+                        .setActiveCategory(category);
+                  },
+                  leading: Icon(
+                    Icons.bookmark,
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withOpacity(0.75),
+                  ),
+                  title: Text(category.label),
                 ),
-                title: Text(category.label),
               ),
             ),
           ],

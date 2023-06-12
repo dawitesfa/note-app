@@ -30,9 +30,7 @@ class Notes extends ConsumerWidget {
 
     return notes.isNotEmpty
         ? content
-        : Center(
-            child: Text('Nothing to show for now...'),
-          );
+        : const Center(child: Text('Nothing to show for now...'));
   }
 }
 

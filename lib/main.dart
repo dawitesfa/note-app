@@ -15,6 +15,9 @@ class App extends StatelessWidget {
       theme: ThemeData().copyWith(
         useMaterial3: true,
         textTheme: GoogleFonts.latoTextTheme(),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color.fromARGB(255, 250, 149, 198),
+        ),
       ),
       darkTheme: ThemeData.dark().copyWith(
         useMaterial3: true,

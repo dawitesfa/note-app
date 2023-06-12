@@ -15,7 +15,11 @@ class NotesNotifier extends StateNotifier<List<Note>> {
       }
     } else {
       var newState = [...state];
-      newState.insert(index, note);
+      if (index < state.length) {
+        newState.insert(index, note);
+      } else {
+        newState.add(note);
+      }
       state = newState;
     }
   }
@@ -40,6 +44,7 @@ final notesProvider =
 final filteredNotesProvider = Provider(
   (ref) {
     var allNotes = ref.watch(notesProvider);
+    allNotes.sort((b, a) => a.date.compareTo(b.date));
     var activeCategory = ref.watch(activeCategoryProvider);
     if (activeCategory == null) return allNotes;
     return allNotes
