@@ -1,24 +1,26 @@
 import 'package:todo/constants.dart';
-import 'package:todo/models/category.dart';
 import 'package:todo/models/custom_color.dart';
 
 class Note {
   Note({
+    String? id,
     required this.title,
     required this.note,
-    this.category,
     this.color,
-    this.editedDate,
-  })  : id = uuid.v4(),
-        date = DateTime.now();
+    this.category,
+    DateTime? date,
+    DateTime? editedDate,
+  })  : id = id ?? uuid.v4(),
+        date = date ?? DateTime.now(),
+        editedDate = editedDate ?? DateTime.now();
 
   final String id;
   final DateTime date;
-  DateTime? editedDate;
+  DateTime editedDate;
   String title;
   String note;
-  Category? category;
+  String? category;
   CustomColor? color;
 
-  get formattedDate => dateFormatter.format(editedDate!);
+  get formattedDate => dateFormatter.format(editedDate);
 }

@@ -31,15 +31,19 @@ class App extends StatelessWidget {
           headlineLarge: const TextStyle(
             color: Colors.white54,
           ),
-          bodyMedium: const TextStyle(
-            color: Colors.white54,
-            fontWeight: FontWeight.w300,
-          ),
           titleLarge: const TextStyle(
             color: Colors.white54,
           ),
           headlineSmall: const TextStyle(
             color: Colors.white54,
+          ),
+          bodySmall: const TextStyle(
+            color: Colors.white54,
+            fontWeight: FontWeight.w300,
+          ),
+          bodyMedium: const TextStyle(
+            color: Colors.white54,
+            fontWeight: FontWeight.w300,
           ),
           bodyLarge: const TextStyle(
             color: Colors.white54,

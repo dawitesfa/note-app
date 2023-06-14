@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todo/models/note.dart';
-import 'package:todo/providers/active_tab_provider.dart';
+import 'package:todo/providers/category_provider.dart';
 import 'package:todo/providers/grid_view_provider.dart';
 import 'package:todo/providers/notes_provider.dart';
 import 'package:todo/providers/selected_color_provider.dart';
 import 'package:todo/providers/selected_items_provider.dart';
 import 'package:todo/screens/note_screen.dart';
+import 'package:todo/screens/search_screen.dart';
 import 'package:todo/widgets/color_pick.dart';
 import 'package:todo/widgets/main_drawer.dart';
 import 'package:todo/widgets/notes.dart';
-import 'package:todo/widgets/tasks.dart';
 
 class TabScreen extends ConsumerWidget {
   const TabScreen({super.key});
@@ -21,8 +21,9 @@ class TabScreen extends ConsumerWidget {
     required context,
     required WidgetRef ref,
   }) {
+    final currentCategory = ref.watch(activeCategoryProvider);
     final targetNote =
-        note ?? Note(title: '', note: '', editedDate: DateTime.now());
+        note ?? Note(title: '', note: '', category: currentCategory);
     ref.read(activeColorProvider.notifier).setColor(null);
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -78,7 +79,6 @@ class TabScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final activeTabIndex = ref.watch(activeTabProvider);
     final bool isGrid = ref.watch(isGridViewProvider);
     final selectedNotes = ref.watch(selectedItemsProvider);
     final bool isSelecting = selectedNotes.isNotEmpty;
@@ -130,6 +130,15 @@ class TabScreen extends ConsumerWidget {
             : [
                 IconButton(
                   onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (ctx) => const SearchScreen()));
+                  },
+                  icon: const Icon(
+                    Icons.search,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {
                     ref.read(isGridViewProvider.notifier).toggleIsGridView();
                   },
                   icon: Icon(
@@ -138,34 +147,14 @@ class TabScreen extends ConsumerWidget {
                         : Icons.view_agenda_outlined,
                   ),
                 ),
-                IconButton(
-                  onPressed: () => openNote(context: context, ref: ref),
-                  icon: const Icon(Icons.add),
-                )
               ],
       ),
-      drawer: const MainDrawer(),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        currentIndex: activeTabIndex,
-        selectedItemColor: Theme.of(context).colorScheme.onSurface,
-        unselectedItemColor:
-            Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-        onTap: (index) {
-          ref.read(activeTabProvider.notifier).setTabIndex(index);
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.note),
-            label: 'Notes',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.check_box),
-            label: 'Tasks',
-          ),
-        ],
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => openNote(context: context, ref: ref),
+        child: const Icon(Icons.add),
       ),
-      body: activeTabIndex == 0 ? const Notes() : const Tasks(),
+      drawer: const MainDrawer(),
+      body: const Notes(),
     );
   }
 }

@@ -1,19 +1,28 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:todo/data/data.dart';
 import 'package:todo/models/note.dart';
 import 'package:todo/providers/category_provider.dart';
+import 'package:todo/providers/database_helper.dart';
 
 class NotesNotifier extends StateNotifier<List<Note>> {
-  NotesNotifier() : super(notes);
+  NotesNotifier() : super([]);
 
-  void saveNote(Note note, {int? index}) {
+  final DatabaseHelper dbHelper = const DatabaseHelper();
+
+  void loadData() async {
+    state = await dbHelper.fetchNotes();
+  }
+
+  void saveNote(Note note, {int? index}) async {
     if (index == null) {
       if (!state.contains(note)) {
         state = [...state, note];
+        dbHelper.addNoteToDb(note);
       } else {
         editNote(note);
+        dbHelper.updateNoteOnDb(note);
       }
     } else {
+      dbHelper.addNoteToDb(note);
       var newState = [...state];
       if (index < state.length) {
         newState.insert(index, note);
@@ -32,7 +41,8 @@ class NotesNotifier extends StateNotifier<List<Note>> {
     state = newNotes;
   }
 
-  void removeNote(String id) {
+  void removeNote(String id) async {
+    dbHelper.removeNoteFromDb(id);
     final newNotes = state.where((note) => note.id != id).toList();
     state = newNotes;
   }
@@ -47,8 +57,6 @@ final filteredNotesProvider = Provider(
     allNotes.sort((b, a) => a.date.compareTo(b.date));
     var activeCategory = ref.watch(activeCategoryProvider);
     if (activeCategory == null) return allNotes;
-    return allNotes
-        .where((note) => note.category?.id == activeCategory.id)
-        .toList();
+    return allNotes.where((note) => note.category == activeCategory).toList();
   },
 );

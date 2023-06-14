@@ -2,8 +2,6 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:todo/models/category.dart';
-import 'package:todo/providers/active_tab_provider.dart';
 import 'package:todo/providers/category_provider.dart';
 
 class MainDrawer extends ConsumerWidget {
@@ -11,8 +9,8 @@ class MainDrawer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final Category? selectedCategory = ref.watch(activeCategoryProvider);
-    final categories = ref.watch(categoriesProvider);
+    final String? selectedCategory = ref.watch(activeCategoryProvider);
+    final categories = ref.watch(catagoriesProvider);
     return Drawer(
       width: min(MediaQuery.of(context).size.width - 40, 320),
       child: SingleChildScrollView(
@@ -32,8 +30,6 @@ class MainDrawer extends ConsumerWidget {
                       .surfaceTint
                       .withOpacity(0.6),
                   onTap: () {
-                    ref.read(activeTabProvider.notifier).setTabIndex(0);
-
                     Navigator.of(context).pop();
                     ref
                         .read(activeCategoryProvider.notifier)
@@ -62,8 +58,8 @@ class MainDrawer extends ConsumerWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: ListTile(
                   selectedColor: Theme.of(context).colorScheme.onSurface,
-                  selected: selectedCategory != null &&
-                      selectedCategory.id == category.id,
+                  selected:
+                      selectedCategory != null && selectedCategory == category,
                   selectedTileColor: Theme.of(context)
                       .colorScheme
                       .surfaceTint
@@ -73,7 +69,6 @@ class MainDrawer extends ConsumerWidget {
                   ),
                   onTap: () {
                     Navigator.of(context).pop();
-                    ref.read(activeTabProvider.notifier).setTabIndex(0);
                     ref
                         .read(activeCategoryProvider.notifier)
                         .setActiveCategory(category);
@@ -85,7 +80,7 @@ class MainDrawer extends ConsumerWidget {
                         .onSurface
                         .withOpacity(0.75),
                   ),
-                  title: Text(category.label),
+                  title: Text(category),
                 ),
               ),
             ),

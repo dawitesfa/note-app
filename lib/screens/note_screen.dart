@@ -138,11 +138,14 @@ class NoteScreen extends ConsumerWidget {
               children: [
                 TextFormField(
                   initialValue: note.title,
+                  minLines: 1,
+                  maxLines: 2,
                   onSaved: (value) {
                     importedTitle = value!;
                   },
                   style: Theme.of(context).textTheme.headlineLarge!.copyWith(
                         fontSize: 20,
+                        overflow: TextOverflow.ellipsis,
                       ),
                   decoration: const InputDecoration(
                     border: InputBorder.none,

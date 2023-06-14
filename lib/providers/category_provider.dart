@@ -1,26 +1,40 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:todo/data/data.dart';
-import 'package:todo/models/category.dart';
+import 'package:todo/providers/database_helper.dart';
 
-class CategoryNotifier extends StateNotifier<List<Category>> {
-  CategoryNotifier() : super(categries);
-
-  void addCategory(Category category) {
-    state = [...state, category];
-  }
-}
-
-final categoriesProvider =
-    StateNotifierProvider<CategoryNotifier, List<Category>>(
-        (ref) => CategoryNotifier());
-
-class ActiveCategoryNotifier extends StateNotifier<Category?> {
+class ActiveCategoryNotifier extends StateNotifier<String?> {
   ActiveCategoryNotifier() : super(null);
-  void setActiveCategory(Category? category) {
+  void setActiveCategory(String? category) {
     state = category;
   }
 }
 
 final activeCategoryProvider =
-    StateNotifierProvider<ActiveCategoryNotifier, Category?>(
+    StateNotifierProvider<ActiveCategoryNotifier, String?>(
         (ref) => ActiveCategoryNotifier());
+
+class CategoryNotifier extends StateNotifier<List<String>> {
+  CategoryNotifier() : super([]);
+
+  final dbHelper = const DatabaseHelper();
+
+  void loadData() async {
+    state = await dbHelper.fetchCategories();
+  }
+
+  void addCategory(String category) {
+    if (state.contains(category)) {
+      return;
+    }
+    state = [...state, category];
+    dbHelper.addCategoryToDb(category);
+  }
+
+  void removeCategory(String category) {
+    state = [...state].where((cat) => cat != category).toList();
+    dbHelper.removeCategoryFromDb(category);
+  }
+}
+
+final catagoriesProvider =
+    StateNotifierProvider<CategoryNotifier, List<String>>(
+        (ref) => CategoryNotifier());

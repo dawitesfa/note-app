@@ -2,18 +2,46 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:todo/models/note.dart';
+import 'package:todo/providers/category_provider.dart';
 import 'package:todo/providers/grid_view_provider.dart';
 import 'package:todo/providers/notes_provider.dart';
 import 'package:todo/widgets/note_item.dart';
 
-class Notes extends ConsumerWidget {
+class Notes extends ConsumerStatefulWidget {
   const Notes({super.key});
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() {
+    return _NotesState();
+  }
+}
+
+class _NotesState extends ConsumerState<Notes> {
+  @override
+  void initState() {
+    ref.read(notesProvider.notifier).loadData();
+    ref.read(catagoriesProvider.notifier).loadData();
+    super.initState();
+  }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final bool largeDisplay = MediaQuery.of(context).size.width > 600;
     final isGrid = ref.watch(isGridViewProvider);
     final notes = ref.watch(filteredNotesProvider);
+    if (notes.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            'There is no item to show, please add Note or pick other label.',
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+        ),
+      );
+    }
     final content = isGrid
         ? MasonryGridView.count(
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
@@ -27,10 +55,14 @@ class Notes extends ConsumerWidget {
             itemCount: notes.length,
             itemBuilder: (context, i) => ListContent(nt: notes[i], ref: ref),
           );
-
-    return notes.isNotEmpty
-        ? content
-        : const Center(child: Text('Nothing to show for now...'));
+    return FutureBuilder(
+      builder: (context, snapshot) =>
+          snapshot.connectionState == ConnectionState.waiting
+              ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+              : content,
+    );
   }
 }
 
@@ -48,7 +80,7 @@ class ListContent extends StatelessWidget {
           borderRadius: const BorderRadius.all(
             Radius.circular(10),
           ),
-          color: Theme.of(context).colorScheme.error.withOpacity(0.5),
+          color: Theme.of(context).colorScheme.error.withOpacity(0.3),
         ),
         child: const Center(
           child: Text('deleting...'),

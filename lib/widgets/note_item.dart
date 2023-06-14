@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todo/models/note.dart';
+import 'package:todo/providers/category_provider.dart';
 import 'package:todo/providers/selected_color_provider.dart';
 import 'package:todo/providers/selected_items_provider.dart';
 import 'package:todo/screens/note_screen.dart';
@@ -10,19 +11,20 @@ class NoteItem extends ConsumerWidget {
     super.key,
     required this.note,
   });
+
   final Note note;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedNotes = ref.watch(selectedItemsProvider);
     bool isSelecting = selectedNotes.isNotEmpty;
-    bool isSelcted = selectedNotes.contains(note);
+    bool isSelected = selectedNotes.contains(note);
     return Container(
       decoration: BoxDecoration(
         color: note.color?.getColor(context),
         border: Border.all(
-          width: isSelcted ? 1.5 : 0.5,
-          color: isSelcted
+          width: isSelected ? 1.5 : 0.5,
+          color: isSelected
               ? Theme.of(context).colorScheme.secondaryContainer
               : Theme.of(context).colorScheme.onSurface.withOpacity(0.25),
         ),
@@ -49,10 +51,11 @@ class NoteItem extends ConsumerWidget {
             ref.read(selectedItemsProvider.notifier).addSelection(note);
           }
         },
-        child: Padding(
+        child: Container(
+          width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               note.title.isNotEmpty
                   ? Text(
@@ -76,6 +79,35 @@ class NoteItem extends ConsumerWidget {
                               ),
                       maxLines: 10,
                       overflow: TextOverflow.ellipsis,
+                    )
+                  : const SizedBox(),
+              const SizedBox(
+                height: 10,
+              ),
+              note.category != null
+                  ? InkWell(
+                      borderRadius: BorderRadius.circular(10),
+                      onTap: () {
+                        ref
+                            .read(activeCategoryProvider.notifier)
+                            .setActiveCategory(note.category);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .outlineVariant
+                                .withOpacity(0.25),
+                          ),
+                        ),
+                        child: Text(
+                          note.category!,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ),
                     )
                   : const SizedBox(),
             ],
