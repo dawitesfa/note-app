@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todo/models/custom_color.dart';
 import 'package:todo/models/note.dart';
 import 'package:todo/providers/notes_provider.dart';
+import 'package:todo/providers/pinned_provider.dart';
 import 'package:todo/providers/selected_color_provider.dart';
 import 'package:todo/widgets/add_label.dart';
 import 'package:todo/widgets/color_pick.dart';
@@ -46,6 +47,8 @@ class NoteScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     CustomColor? selectedColor = ref.watch(activeColorProvider);
+    final pinnedIds = ref.watch(pinnedItemsProvider);
+    final isPinned = pinnedIds.contains(note.id);
     var keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
 
     return WillPopScope(
@@ -58,10 +61,12 @@ class NoteScreen extends ConsumerWidget {
         appBar: AppBar(
           actions: [
             IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.pin_drop,
-              ),
+              onPressed: () {
+                ref
+                    .read(pinnedItemsProvider.notifier)
+                    .togglePinnedNote(note.id);
+              },
+              icon: Icon(isPinned ? Icons.push_pin : Icons.push_pin_outlined),
             ),
           ],
           backgroundColor: selectedColor?.getColor(context),

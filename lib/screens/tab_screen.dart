@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todo/models/note.dart';
-import 'package:todo/providers/category_provider.dart';
-import 'package:todo/providers/grid_view_provider.dart';
 import 'package:todo/providers/notes_provider.dart';
+import 'package:todo/providers/prefs_provider.dart';
 import 'package:todo/providers/selected_color_provider.dart';
 import 'package:todo/providers/selected_items_provider.dart';
 import 'package:todo/screens/note_screen.dart';
@@ -21,7 +20,8 @@ class TabScreen extends ConsumerWidget {
     required context,
     required WidgetRef ref,
   }) {
-    final currentCategory = ref.watch(activeCategoryProvider);
+    final currentCategory =
+        ref.watch(prefsProvider)['activeCategory'] as String?;
     final targetNote =
         note ?? Note(title: '', note: '', category: currentCategory);
     ref.read(activeColorProvider.notifier).setColor(null);
@@ -79,7 +79,8 @@ class TabScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final bool isGrid = ref.watch(isGridViewProvider);
+    final prefs = ref.watch(prefsProvider);
+    final isGrid = prefs['isGrid'] as bool;
     final selectedNotes = ref.watch(selectedItemsProvider);
     final bool isSelecting = selectedNotes.isNotEmpty;
     return Scaffold(
@@ -139,7 +140,7 @@ class TabScreen extends ConsumerWidget {
                 ),
                 IconButton(
                   onPressed: () {
-                    ref.read(isGridViewProvider.notifier).toggleIsGridView();
+                    ref.read(prefsProvider.notifier).savePref(isGrid: !isGrid);
                   },
                   icon: Icon(
                     !isGrid

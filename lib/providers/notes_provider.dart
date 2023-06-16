@@ -1,14 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todo/models/note.dart';
-import 'package:todo/providers/category_provider.dart';
 import 'package:todo/providers/database_helper.dart';
+import 'package:todo/providers/prefs_provider.dart';
 
 class NotesNotifier extends StateNotifier<List<Note>> {
   NotesNotifier() : super([]);
 
   final DatabaseHelper dbHelper = const DatabaseHelper();
 
-  void loadData() async {
+  Future<void> loadData() async {
     state = await dbHelper.fetchNotes();
   }
 
@@ -55,7 +55,7 @@ final filteredNotesProvider = Provider(
   (ref) {
     var allNotes = ref.watch(notesProvider);
     allNotes.sort((b, a) => a.date.compareTo(b.date));
-    var activeCategory = ref.watch(activeCategoryProvider);
+    var activeCategory = ref.watch(prefsProvider)['activeCategory'];
     if (activeCategory == null) return allNotes;
     return allNotes.where((note) => note.category == activeCategory).toList();
   },

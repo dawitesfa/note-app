@@ -34,6 +34,9 @@ class App extends StatelessWidget {
           titleLarge: const TextStyle(
             color: Colors.white54,
           ),
+          titleMedium: const TextStyle(
+            color: Colors.white54,
+          ),
           headlineSmall: const TextStyle(
             color: Colors.white54,
           ),

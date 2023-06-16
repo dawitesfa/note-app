@@ -1,17 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todo/providers/database_helper.dart';
 
-class ActiveCategoryNotifier extends StateNotifier<String?> {
-  ActiveCategoryNotifier() : super(null);
-  void setActiveCategory(String? category) {
-    state = category;
-  }
-}
-
-final activeCategoryProvider =
-    StateNotifierProvider<ActiveCategoryNotifier, String?>(
-        (ref) => ActiveCategoryNotifier());
-
 class CategoryNotifier extends StateNotifier<List<String>> {
   CategoryNotifier() : super([]);
 

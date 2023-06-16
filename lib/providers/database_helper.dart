@@ -18,6 +18,12 @@ class DatabaseHelper {
         db.execute(
           'CREATE TABLE note_categories(title TEXT)',
         );
+        db.execute(
+          'CREATE TABLE prefs(grid INTEGER, activeCategory TEXT)',
+        );
+        db.execute(
+          'CREATE TABLE pins(id TEXT PRIMARY KEY)',
+        );
       },
       version: 1,
     );
@@ -92,5 +98,47 @@ class DatabaseHelper {
   void removeCategoryFromDb(String title) async {
     final db = await database();
     db.delete('note_categories', where: 'title = ?', whereArgs: [title]);
+  }
+
+  Future<Map<String, Object?>> fetchPrefs() async {
+    final db = await database();
+    final data = await db.query('prefs');
+    return {
+      'isGrid': data[0]['grid'] == 1 ? true : false,
+      'activeCategory': (data[0]['activeCategory'] as String).isNotEmpty
+          ? data[0]['activeCategory'] as String
+          : null
+    };
+  }
+
+  void addPrefs(isGrid, activeCategory) async {
+    final db = await database();
+    db.insert(
+        'prefs', {'grid': isGrid ? 1 : 0, 'activeCategory': activeCategory});
+  }
+
+  void savePrefs(isGrid, activeCategory) async {
+    final db = await database();
+    db.update(
+      'prefs',
+      {'grid': isGrid ? 1 : 0, 'activeCategory': activeCategory},
+    );
+  }
+
+  Future<List<String>> fetchPins() async {
+    final db = await database();
+    final data = await db.query('pins');
+    final ids = data.map((e) => e['id'] as String).toList();
+    return ids;
+  }
+
+  void addPin(String id) async {
+    final db = await database();
+    db.insert('pins', {'id': id});
+  }
+
+  void removePin(String id) async {
+    final db = await database();
+    db.delete('pins', where: 'id = ?', whereArgs: [id]);
   }
 }

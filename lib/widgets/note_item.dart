@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todo/models/note.dart';
 import 'package:todo/providers/category_provider.dart';
+import 'package:todo/providers/prefs_provider.dart';
 import 'package:todo/providers/selected_color_provider.dart';
 import 'package:todo/providers/selected_items_provider.dart';
 import 'package:todo/screens/note_screen.dart';
@@ -89,8 +90,8 @@ class NoteItem extends ConsumerWidget {
                       borderRadius: BorderRadius.circular(10),
                       onTap: () {
                         ref
-                            .read(activeCategoryProvider.notifier)
-                            .setActiveCategory(note.category);
+                            .read(prefsProvider.notifier)
+                            .savePref(activeCategory: note.category);
                       },
                       child: Container(
                         padding: const EdgeInsets.all(4),

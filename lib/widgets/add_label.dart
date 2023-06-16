@@ -32,35 +32,54 @@ class AddLabel extends ConsumerWidget {
       width: double.infinity,
       child: Column(
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: TextFormField(
-                  onChanged: (value) {
-                    newLabel = value;
-                  },
-                  initialValue: note.category,
-                  decoration: const InputDecoration(
-                    hintText: 'New Label',
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    onChanged: (value) {
+                      newLabel = value;
+                    },
+                    initialValue: note.category,
+                    decoration: const InputDecoration(
+                      hintText: 'New Label',
+                    ),
                   ),
                 ),
-              ),
-              IconButton(
-                onPressed: () {
-                  if (note.category == newLabel || newLabel!.isEmpty) {
-                    return;
-                  }
-                  Navigator.of(context).pop();
-                  final cat = newLabel;
-                  note.category = cat;
-                  ref.read(notesProvider.notifier).saveNote(note);
-                  ref.read(catagoriesProvider.notifier).addCategory(cat!);
-                },
-                icon: const Icon(
-                  Icons.add,
-                ),
-              )
-            ],
+                Row(
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        if (note.category == newLabel && newLabel == null) {
+                          return;
+                        }
+                        Navigator.of(context).pop();
+                        final cat = newLabel!.isEmpty ? null : newLabel;
+                        note.category = cat;
+                        ref.read(notesProvider.notifier).saveNote(note);
+                        if (cat != null) {
+                          ref
+                              .read(catagoriesProvider.notifier)
+                              .addCategory(cat);
+                        }
+                      },
+                      icon: const Icon(
+                        Icons.add,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      icon: const Icon(
+                        Icons.clear,
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
           ),
           Expanded(
             child: ListView.builder(

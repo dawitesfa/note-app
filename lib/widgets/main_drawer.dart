@@ -3,13 +3,15 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todo/providers/category_provider.dart';
+import 'package:todo/providers/prefs_provider.dart';
 
 class MainDrawer extends ConsumerWidget {
   const MainDrawer({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final String? selectedCategory = ref.watch(activeCategoryProvider);
+    final selectedCategory =
+        ref.watch(prefsProvider)['activeCategory'] as String?;
     final categories = ref.watch(catagoriesProvider);
     return Drawer(
       width: min(MediaQuery.of(context).size.width - 40, 320),
@@ -32,8 +34,8 @@ class MainDrawer extends ConsumerWidget {
                   onTap: () {
                     Navigator.of(context).pop();
                     ref
-                        .read(activeCategoryProvider.notifier)
-                        .setActiveCategory(null);
+                        .read(prefsProvider.notifier)
+                        .savePref(activeCategory: '');
                   },
                   leading: Icon(
                     Icons.book_rounded,
@@ -69,9 +71,12 @@ class MainDrawer extends ConsumerWidget {
                   ),
                   onTap: () {
                     Navigator.of(context).pop();
+                    // ref
+                    //     .read(activeCategoryProvider.notifier)
+                    //     .setActiveCategory(category);
                     ref
-                        .read(activeCategoryProvider.notifier)
-                        .setActiveCategory(category);
+                        .read(prefsProvider.notifier)
+                        .savePref(activeCategory: category);
                   },
                   leading: Icon(
                     Icons.bookmark,
