@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todo/models/note.dart';
-import 'package:todo/providers/database_helper.dart';
+import 'package:todo/database/database_helper.dart';
 import 'package:todo/providers/prefs_provider.dart';
 
 class NotesNotifier extends StateNotifier<List<Note>> {

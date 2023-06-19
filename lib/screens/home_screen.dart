@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todo/models/note.dart';
 import 'package:todo/providers/notes_provider.dart';
+import 'package:todo/providers/picked_images_provider.dart';
 import 'package:todo/providers/prefs_provider.dart';
 import 'package:todo/providers/selected_color_provider.dart';
 import 'package:todo/providers/selected_items_provider.dart';
@@ -9,26 +10,25 @@ import 'package:todo/screens/note_screen.dart';
 import 'package:todo/screens/search_screen.dart';
 import 'package:todo/widgets/color_pick.dart';
 import 'package:todo/widgets/main_drawer.dart';
-import 'package:todo/widgets/notes.dart';
+import 'package:todo/widgets/note_list.dart';
 
 class TabScreen extends ConsumerWidget {
   const TabScreen({super.key});
 
   //This function is to open a note screen
   void openNote({
-    Note? note,
     required context,
     required WidgetRef ref,
   }) {
     final currentCategory =
         ref.watch(prefsProvider)['activeCategory'] as String?;
-    final targetNote =
-        note ?? Note(title: '', note: '', category: currentCategory);
     ref.read(activeColorProvider.notifier).setColor(null);
+    final note = Note(title: '', note: '', category: currentCategory);
+    ref.read(pickedImageProvider.notifier).reset();
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (ctx) => NoteScreen(
-          note: targetNote,
+          note: note,
         ),
       ),
     );
@@ -92,41 +92,7 @@ class TabScreen extends ConsumerWidget {
         automaticallyImplyLeading: !isSelecting,
         actions: isSelecting
             // This list of widgets will be shown when in selecting mode
-            ? [
-                TextButton.icon(
-                  label: Text(
-                    '${selectedNotes.length}',
-                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          color:
-                              Theme.of(context).colorScheme.secondaryContainer,
-                        ),
-                  ),
-                  onPressed: () {
-                    ref.read(selectedItemsProvider.notifier).deselect();
-                  },
-                  icon: Icon(
-                    Icons.close,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                ),
-                const Spacer(),
-                IconButton(
-                  onPressed: () {
-                    showModalBottomSheet(
-                      context: context,
-                      builder: (context) => ColorPick(notes: selectedNotes),
-                    );
-                    ref.read(selectedItemsProvider.notifier).deselect();
-                  },
-                  icon: const Icon(Icons.color_lens),
-                ),
-                IconButton(
-                  onPressed: () {
-                    _deleteSelection(ref, context);
-                  },
-                  icon: const Icon(Icons.delete),
-                ),
-              ]
+            ? getSelectingActions(selectedNotes, context, ref)
             // This list of widgets will be shown when in normal mode
             : [
                 IconButton(
@@ -157,5 +123,46 @@ class TabScreen extends ConsumerWidget {
       drawer: const MainDrawer(),
       body: const Notes(),
     );
+  }
+
+  List<Widget> getSelectingActions(
+    List<Note> selectedNotes,
+    BuildContext context,
+    WidgetRef ref,
+  ) {
+    return [
+      TextButton.icon(
+        label: Text(
+          '${selectedNotes.length}',
+          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                color: Theme.of(context).colorScheme.secondaryContainer,
+              ),
+        ),
+        onPressed: () {
+          ref.read(selectedItemsProvider.notifier).deselect();
+        },
+        icon: Icon(
+          Icons.close,
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
+      ),
+      const Spacer(),
+      IconButton(
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            builder: (context) => ColorPick(notes: selectedNotes),
+          );
+          ref.read(selectedItemsProvider.notifier).deselect();
+        },
+        icon: const Icon(Icons.color_lens),
+      ),
+      IconButton(
+        onPressed: () {
+          _deleteSelection(ref, context);
+        },
+        icon: const Icon(Icons.delete),
+      ),
+    ];
   }
 }

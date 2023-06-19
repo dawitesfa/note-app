@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:sqflite/sqflite.dart' as sql;
 import 'package:sqflite/sqlite_api.dart';
 import 'package:path/path.dart' as path;
@@ -13,7 +16,7 @@ class DatabaseHelper {
       path.join(dbPath, 'notes.db'),
       onCreate: (db, version) {
         db.execute(
-          'CREATE TABLE user_notes(id TEXT PRIMARY KEY, title TEXT, note TEXT, category TEXT, color TEXT, date TEXT, editedDate TEXT)',
+          'CREATE TABLE user_notes(id TEXT PRIMARY KEY, title TEXT, note TEXT, category TEXT, color TEXT, date TEXT, editedDate TEXT, images TEXT)',
         );
         db.execute(
           'CREATE TABLE note_categories(title TEXT)',
@@ -32,21 +35,26 @@ class DatabaseHelper {
   Future<List<Note>> fetchNotes() async {
     final db = await database();
     final data = await db.query('user_notes');
-    final notes = data
-        .map(
-          (row) => Note(
-            id: row['id'] as String,
-            title: row['title'] as String,
-            note: row['note'] as String,
-            date: DateTime.tryParse(row['date'] as String),
-            category: row['category'] as String?,
-            color: row['color'] != null
-                ? getColorById(row['color'] as String)
-                : null,
-            editedDate: DateTime.tryParse(row['editedDate'] as String),
-          ),
-        )
-        .toList();
+    final notes = data.map(
+      (row) {
+        final List<String> images =
+            (jsonDecode(row['images'] as String) as List<dynamic>)
+                .cast<String>();
+
+        return Note(
+          id: row['id'] as String,
+          title: row['title'] as String,
+          note: row['note'] as String,
+          date: DateTime.tryParse(row['date'] as String),
+          category: row['category'] as String?,
+          color: row['color'] != null
+              ? getColorById(row['color'] as String)
+              : null,
+          editedDate: DateTime.tryParse(row['editedDate'] as String),
+          imageUrls: images.map((img) => File(img)).toList(),
+        );
+      },
+    ).toList();
     return notes;
   }
 
@@ -67,6 +75,8 @@ class DatabaseHelper {
   }
 
   Map<String, Object?> dataToMap(Note note) {
+    List<String> images = note.imageUrls.map((img) => img.path).toList();
+    print(images);
     return {
       'id': note.id,
       'title': note.title,
@@ -75,6 +85,7 @@ class DatabaseHelper {
       'color': note.color?.id,
       'date': note.date.toIso8601String(),
       'editedDate': note.editedDate.toIso8601String(),
+      'images': jsonEncode(images),
     };
   }
 

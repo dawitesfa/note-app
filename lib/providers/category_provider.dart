@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:todo/providers/database_helper.dart';
+import 'package:todo/database/database_helper.dart';
 
 class CategoryNotifier extends StateNotifier<List<String>> {
   CategoryNotifier() : super([]);

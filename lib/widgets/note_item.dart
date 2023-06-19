@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todo/models/note.dart';
-import 'package:todo/providers/category_provider.dart';
+import 'package:todo/providers/picked_images_provider.dart';
 import 'package:todo/providers/prefs_provider.dart';
 import 'package:todo/providers/selected_color_provider.dart';
 import 'package:todo/providers/selected_items_provider.dart';
 import 'package:todo/screens/note_screen.dart';
+import 'package:todo/widgets/stagerred_images.dart';
 
 class NoteItem extends ConsumerWidget {
   const NoteItem({
@@ -20,6 +21,9 @@ class NoteItem extends ConsumerWidget {
     final selectedNotes = ref.watch(selectedItemsProvider);
     bool isSelecting = selectedNotes.isNotEmpty;
     bool isSelected = selectedNotes.contains(note);
+    final images = note.imageUrls.length <= 6
+        ? note.imageUrls
+        : [...note.imageUrls].sublist(0, 6);
     return Container(
       decoration: BoxDecoration(
         color: note.color?.getColor(context),
@@ -40,6 +44,7 @@ class NoteItem extends ConsumerWidget {
             ref.read(selectedItemsProvider.notifier).addSelection(note);
           } else {
             ref.read(activeColorProvider.notifier).setColor(note.color);
+            ref.read(pickedImageProvider.notifier).reset();
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => NoteScreen(note: note),
@@ -54,63 +59,78 @@ class NoteItem extends ConsumerWidget {
         },
         child: Container(
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+          padding: const EdgeInsets.only(bottom: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              note.title.isNotEmpty
-                  ? Text(
-                      note.title,
-                      style: Theme.of(context)
-                          .textTheme
-                          .headlineLarge!
-                          .copyWith(fontSize: 20),
-                      maxLines: 2,
-                    )
-                  : const SizedBox(),
-              const SizedBox(
-                height: 4,
+              StagerredImageGrid(
+                images: images,
+                height: 250,
+                clickable: false,
               ),
-              note.note.isNotEmpty
-                  ? Text(
-                      note.note,
-                      style:
-                          Theme.of(context).textTheme.headlineLarge!.copyWith(
-                                fontSize: 14,
+              Container(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    note.title.isNotEmpty
+                        ? Text(
+                            note.title,
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineLarge!
+                                .copyWith(fontSize: 20),
+                            maxLines: 2,
+                          )
+                        : const SizedBox(),
+                    const SizedBox(
+                      height: 4,
+                    ),
+                    note.note.isNotEmpty
+                        ? Text(
+                            note.note,
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineLarge!
+                                .copyWith(
+                                  fontSize: 14,
+                                ),
+                            maxLines: 10,
+                            overflow: TextOverflow.ellipsis,
+                          )
+                        : const SizedBox(),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    note.category != null
+                        ? InkWell(
+                            borderRadius: BorderRadius.circular(10),
+                            onTap: () {
+                              ref
+                                  .read(prefsProvider.notifier)
+                                  .savePref(activeCategory: note.category);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .outlineVariant
+                                      .withOpacity(0.25),
+                                ),
                               ),
-                      maxLines: 10,
-                      overflow: TextOverflow.ellipsis,
-                    )
-                  : const SizedBox(),
-              const SizedBox(
-                height: 10,
-              ),
-              note.category != null
-                  ? InkWell(
-                      borderRadius: BorderRadius.circular(10),
-                      onTap: () {
-                        ref
-                            .read(prefsProvider.notifier)
-                            .savePref(activeCategory: note.category);
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .outlineVariant
-                                .withOpacity(0.25),
-                          ),
-                        ),
-                        child: Text(
-                          note.category!,
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ),
-                    )
-                  : const SizedBox(),
+                              child: Text(
+                                note.category!,
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ),
+                          )
+                        : const SizedBox(),
+                  ],
+                ),
+              )
             ],
           ),
         ),
