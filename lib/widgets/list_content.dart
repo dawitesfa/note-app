@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todo/models/note.dart';
-import 'package:todo/providers/pinned_provider.dart';
 import 'package:todo/providers/notes_provider.dart';
 import 'package:todo/widgets/note_item.dart';
 
@@ -18,31 +17,8 @@ class ListContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pinnedNotes = ref.watch(pinnedNotesProvider);
-    final pinned = pinnedNotes.isNotEmpty;
-    final noteIndex = pinnedNotes.length;
     return Column(
       children: [
-        (i == 0 && pinned)
-            ? Container(
-                padding: const EdgeInsets.only(top: 8),
-                width: double.infinity,
-                child: Text(
-                  'Pinned',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-              )
-            : const SizedBox(),
-        (i == noteIndex)
-            ? Container(
-                padding: const EdgeInsets.only(top: 8),
-                width: double.infinity,
-                child: Text(
-                  'All Notes',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-              )
-            : const SizedBox(),
         Dismissible(
           background: Container(
             margin: const EdgeInsets.symmetric(vertical: 4),

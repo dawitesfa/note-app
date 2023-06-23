@@ -54,7 +54,7 @@ final notesProvider =
 final filteredNotesProvider = Provider(
   (ref) {
     var allNotes = ref.watch(notesProvider);
-    allNotes.sort((b, a) => a.date.compareTo(b.date));
+    allNotes.sort((b, a) => a.editedDate.compareTo(b.editedDate));
     var activeCategory = ref.watch(prefsProvider)['activeCategory'];
     if (activeCategory == null) return allNotes;
     return allNotes.where((note) => note.category == activeCategory).toList();

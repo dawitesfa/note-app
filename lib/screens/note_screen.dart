@@ -81,6 +81,7 @@ class NoteScreen extends ConsumerWidget {
                 ref
                     .read(pinnedItemsProvider.notifier)
                     .togglePinnedNote(note.id);
+                note.editedDate = DateTime.now();
               },
               icon: Icon(isPinned ? Icons.push_pin : Icons.push_pin_outlined),
             ),
