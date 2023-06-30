@@ -111,19 +111,27 @@ Widget getListHolder({
             : ListViewWithTitle(
                 title: 'Pinned Notes',
                 count: pinnedNotes.length,
-                itemBuild: (context, i) =>
-                    ListContent(nt: pinnedNotes[i], ref: ref, i: i),
+                itemBuild: (context, i) => ListContent(
+                  nt: pinnedNotes[i],
+                  ref: ref,
+                  i: i,
+                ),
               ),
         notes.isEmpty
             ? const SizedBox()
             : ListViewWithTitle(
                 title: 'Other Notes',
                 count: notes.length,
-                itemBuild: (context, i) =>
-                    ListContent(nt: notes[i], ref: ref, i: i),
+                itemBuild: (context, i) => ListContent(
+                  nt: notes[i],
+                  ref: ref,
+                  i: i,
+                ),
               )
       ],
     );
   }
-  return SingleChildScrollView(child: content);
+  return SingleChildScrollView(
+    child: content,
+  );
 }
