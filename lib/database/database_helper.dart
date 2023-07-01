@@ -22,7 +22,7 @@ class DatabaseHelper {
           'CREATE TABLE note_categories(title TEXT)',
         );
         db.execute(
-          'CREATE TABLE prefs(grid INTEGER, activeCategory TEXT)',
+          'CREATE TABLE prefs(grid INTEGER, activeCategory TEXT, isFirstTime INTEGER)',
         );
         db.execute(
           'CREATE TABLE pins(id TEXT PRIMARY KEY)',
@@ -118,21 +118,29 @@ class DatabaseHelper {
       'isGrid': data[0]['grid'] == 1 ? true : false,
       'activeCategory': (data[0]['activeCategory'] as String).isNotEmpty
           ? data[0]['activeCategory'] as String
-          : null
+          : null,
+      'isFirstTime': data[0]['isFirstTime'] == 1 ? true : false,
     };
   }
 
-  void addPrefs(isGrid, activeCategory) async {
+  void addPrefs(isGrid, activeCategory, isFirstTime) async {
     final db = await database();
-    db.insert(
-        'prefs', {'grid': isGrid ? 1 : 0, 'activeCategory': activeCategory});
+    db.insert('prefs', {
+      'grid': isGrid ? 1 : 0,
+      'activeCategory': activeCategory,
+      'isFirstTime': isFirstTime ? 1 : 0,
+    });
   }
 
-  void savePrefs(isGrid, activeCategory) async {
+  void savePrefs(isGrid, activeCategory, isFirstTime) async {
     final db = await database();
     db.update(
       'prefs',
-      {'grid': isGrid ? 1 : 0, 'activeCategory': activeCategory},
+      {
+        'grid': isGrid ? 1 : 0,
+        'activeCategory': activeCategory,
+        'isFirstTime': isFirstTime ? 1 : 0,
+      },
     );
   }
 

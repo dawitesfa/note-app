@@ -4,7 +4,7 @@ import 'package:todo/models/custom_color.dart';
 import 'package:todo/models/note.dart';
 import 'package:todo/widgets/add_label.dart';
 import 'package:todo/widgets/color_pick.dart';
-import 'package:todo/widgets/note_screen/image_picker.dart';
+import 'package:todo/widgets/image_picker.dart';
 
 class ButtomAppBar extends StatelessWidget {
   const ButtomAppBar({

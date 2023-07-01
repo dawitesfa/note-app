@@ -1,21 +1,41 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:todo/providers/category_provider.dart';
+import 'package:todo/providers/pinned_provider.dart';
+import 'package:todo/providers/prefs_provider.dart';
 import 'package:todo/screens/home_screen.dart';
+import 'package:todo/screens/intro_screen.dart';
 
-class SplashScreen extends StatelessWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends ConsumerState<SplashScreen> {
+  @override
+  void initState() {
+    ref.read(prefsProvider.notifier).loadPrefs();
+    ref.read(pinnedItemsProvider.notifier).loadPins();
+    ref.read(catagoriesProvider.notifier).loadData();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    Timer(
-      const Duration(seconds: 3),
-      () => Navigator.of(context).pushReplacement(
+    Timer(const Duration(seconds: 3), () {
+      final prefs = ref.watch(prefsProvider);
+      final isFirstTime = prefs['isFirstTime'] as bool;
+      Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => const TabScreen(),
+          builder: (context) =>
+              isFirstTime ? const IntroScreen() : const HomeScreen(),
         ),
-      ),
-    );
+      );
+    });
     return Scaffold(
       body: Center(
         child: Column(
@@ -30,7 +50,7 @@ class SplashScreen extends StatelessWidget {
               ),
               clipBehavior: Clip.hardEdge,
               child: Image.asset(
-                'assets/images/flutter.png',
+                'assets/images/app-logo.png',
                 fit: BoxFit.cover,
               ),
             ),
@@ -38,7 +58,7 @@ class SplashScreen extends StatelessWidget {
               height: 16,
             ),
             Text(
-              'Note Keep',
+              'KEEP IT!',
               style: Theme.of(context).textTheme.headlineLarge,
             )
           ],

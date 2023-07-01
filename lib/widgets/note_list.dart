@@ -5,26 +5,24 @@ import 'package:todo/providers/category_provider.dart';
 import 'package:todo/providers/notes_provider.dart';
 import 'package:todo/providers/pinned_provider.dart';
 import 'package:todo/providers/prefs_provider.dart';
+import 'package:todo/widgets/empty_list.dart';
 import 'package:todo/widgets/gridview_with_title.dart';
 import 'package:todo/widgets/list_content.dart';
 import 'package:todo/widgets/listview_with_title.dart';
 
-class Notes extends ConsumerStatefulWidget {
-  const Notes({super.key});
+class NoteList extends ConsumerStatefulWidget {
+  const NoteList({super.key});
   @override
   ConsumerState<ConsumerStatefulWidget> createState() {
-    return _NotesState();
+    return _NoteListState();
   }
 }
 
-class _NotesState extends ConsumerState<Notes> {
+class _NoteListState extends ConsumerState<NoteList> {
   late Future<void> _initialState;
   @override
   void initState() {
     _initialState = ref.read(notesProvider.notifier).loadData();
-    ref.read(pinnedItemsProvider.notifier).loadPins();
-    ref.read(catagoriesProvider.notifier).loadData();
-    ref.read(prefsProvider.notifier).loadPrefs();
     super.initState();
   }
 
@@ -59,20 +57,9 @@ Widget getListHolder({
 }) {
   final bool largeDisplay = MediaQuery.of(context).size.width > 600;
   final isGrid = ref.watch(prefsProvider)['isGrid'] as bool;
-  Widget content = Center(
-    child: Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Text(
-        'There is no item to show, please add Note or pick other label.',
-        overflow: TextOverflow.ellipsis,
-        maxLines: 2,
-        textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.titleLarge,
-      ),
-    ),
-  );
+  Widget content;
   if (pinnedNotes.isEmpty && notes.isEmpty) {
-    return content;
+    return const EmptyList();
   }
   if (isGrid) {
     content = Column(

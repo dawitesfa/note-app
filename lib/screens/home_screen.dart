@@ -12,8 +12,8 @@ import 'package:todo/widgets/color_pick.dart';
 import 'package:todo/widgets/main_drawer.dart';
 import 'package:todo/widgets/note_list.dart';
 
-class TabScreen extends ConsumerWidget {
-  const TabScreen({super.key});
+class HomeScreen extends ConsumerWidget {
+  const HomeScreen({super.key});
 
   //This function is to open a note screen
   void openNote({
@@ -84,44 +84,58 @@ class TabScreen extends ConsumerWidget {
     final selectedNotes = ref.watch(selectedItemsProvider);
     final bool isSelecting = selectedNotes.isNotEmpty;
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          // activeTabIndex == 0 ? toolbarTitle : 'Tasks',
-          isSelecting ? "" : 'Notes',
-        ),
-        automaticallyImplyLeading: !isSelecting,
-        actions: isSelecting
-            // This list of widgets will be shown when in selecting mode
-            ? getSelectingActions(selectedNotes, context, ref)
-            // This list of widgets will be shown when in normal mode
-            : [
-                IconButton(
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (ctx) => const SearchScreen()));
-                  },
-                  icon: const Icon(
-                    Icons.search,
-                  ),
-                ),
-                IconButton(
-                  onPressed: () {
-                    ref.read(prefsProvider.notifier).savePref(isGrid: !isGrid);
-                  },
-                  icon: Icon(
-                    !isGrid
-                        ? Icons.grid_view_outlined
-                        : Icons.view_agenda_outlined,
-                  ),
-                ),
-              ],
-      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => openNote(context: context, ref: ref),
         child: const Icon(Icons.add),
       ),
       drawer: const MainDrawer(),
-      body: const Notes(),
+      body: NestedScrollView(
+        headerSliverBuilder: (context, innerBoxIsScrolled) {
+          return [
+            SliverAppBar(
+              floating: true,
+              snap: true,
+              title: Text(
+                // activeTabIndex == 0 ? toolbarTitle : 'Tasks',
+                isSelecting ? "" : 'Notes',
+              ),
+              automaticallyImplyLeading: !isSelecting,
+              actions: isSelecting
+                  // This list of widgets will be shown when in selecting mode
+                  ? getSelectingActions(selectedNotes, context, ref)
+                  // This list of widgets will be shown when in normal mode
+                  : [
+                      IconButton(
+                        onPressed: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (ctx) => const SearchScreen()));
+                        },
+                        icon: Icon(
+                          Icons.search,
+                          color: Theme.of(context).colorScheme.onBackground,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          ref
+                              .read(prefsProvider.notifier)
+                              .savePref(isGrid: !isGrid);
+                        },
+                        icon: Icon(
+                          !isGrid
+                              ? Icons.grid_view_outlined
+                              : Icons.view_agenda_outlined,
+                          color: Theme.of(context).colorScheme.onBackground,
+                        ),
+                      ),
+                    ],
+            )
+          ];
+        },
+        body: const NoteList(),
+      ),
+
+      // body: const NoteList(),
     );
   }
 

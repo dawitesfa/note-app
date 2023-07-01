@@ -8,7 +8,7 @@ import 'package:todo/providers/notes_provider.dart';
 import 'package:todo/providers/picked_images_provider.dart';
 import 'package:todo/providers/pinned_provider.dart';
 import 'package:todo/providers/selected_color_provider.dart';
-import 'package:todo/widgets/note_screen/buttom_appbar.dart';
+import 'package:todo/widgets/buttom_appbar.dart';
 import 'package:todo/widgets/stagerred_images.dart';
 
 // ignore: must_be_immutable
@@ -144,8 +144,12 @@ class NoteScreen extends ConsumerWidget {
                         },
                         style:
                             Theme.of(context).textTheme.headlineLarge!.copyWith(
-                                  fontSize: 20,
+                                  fontSize: 22,
                                   overflow: TextOverflow.ellipsis,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onBackground
+                                      .withOpacity(0.8),
                                 ),
                         decoration: const InputDecoration(
                           border: InputBorder.none,
@@ -157,10 +161,15 @@ class NoteScreen extends ConsumerWidget {
                         onSaved: (value) {
                           importedNote = value!;
                         },
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineLarge!
-                            .copyWith(fontSize: 15, height: 1.3),
+                        style:
+                            Theme.of(context).textTheme.headlineLarge!.copyWith(
+                                  fontSize: 16,
+                                  height: 1.3,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onBackground
+                                      .withOpacity(0.8),
+                                ),
                         decoration: const InputDecoration(
                           border: InputBorder.none,
                           hintText: 'Enter your note here.',

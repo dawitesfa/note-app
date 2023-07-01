@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:todo/screens/splash_screen.dart';
 
-main() => runApp(const ProviderScope(child: App()));
+main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]).then(
+    (fn) => runApp(
+      const ProviderScope(child: App()),
+    ),
+  );
+}
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -26,6 +36,7 @@ class App extends StatelessWidget {
           seedColor: Colors.black,
           surface: const Color.fromARGB(255, 33, 28, 28),
           onSurface: Colors.white70,
+          onBackground: Colors.white,
         ),
         textTheme: GoogleFonts.latoTextTheme().copyWith(
           headlineLarge: const TextStyle(

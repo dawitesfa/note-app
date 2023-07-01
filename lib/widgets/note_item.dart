@@ -58,7 +58,6 @@ class NoteItem extends ConsumerWidget {
           }
         },
         child: Container(
-          width: double.infinity,
           padding: const EdgeInsets.only(bottom: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,9 +68,10 @@ class NoteItem extends ConsumerWidget {
                 clickable: false,
               ),
               Container(
+                width: double.infinity,
                 padding: const EdgeInsets.all(10),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     note.title.isNotEmpty
                         ? Text(
@@ -79,8 +79,15 @@ class NoteItem extends ConsumerWidget {
                             style: Theme.of(context)
                                 .textTheme
                                 .headlineLarge!
-                                .copyWith(fontSize: 20),
+                                .copyWith(
+                                  fontSize: 22,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onBackground
+                                      .withOpacity(0.8),
+                                ),
                             maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           )
                         : const SizedBox(),
                     const SizedBox(
@@ -93,8 +100,11 @@ class NoteItem extends ConsumerWidget {
                                 .textTheme
                                 .headlineLarge!
                                 .copyWith(
-                                  fontSize: 14,
-                                ),
+                                    fontSize: 16,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onBackground
+                                        .withOpacity(0.8)),
                             maxLines: 10,
                             overflow: TextOverflow.ellipsis,
                           )
